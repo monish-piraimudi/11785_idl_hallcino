@@ -1,0 +1,18 @@
+[project]
+name = "hallcino"
+version = "0.1.0"
+description = "HalluciNot baseline: unmodified-LLM hallucination rate harness"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40.0",
+    "datasets>=2.19.0",
+    "huggingface_hub>=0.24.0",
+    "python-dotenv>=1.0.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+local = ["transformers>=4.44.0", "torch>=2.3.0", "accelerate>=0.33.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
