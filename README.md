@@ -1,90 +1,70 @@
-# HalluciNot — Baseline
+# SimpleQA Quantization and Hallucination Evaluation
 
-Baseline harness for the HalluciNot proposal: measure the hallucination rate of an
-**unmodified** LLM, with no monitoring/intervention. This corresponds to Baseline 1
-in the proposal (unmodified model generating to completion).
+A research pipeline evaluating how **model quantization and uncertainty-aware prompting** affect factual accuracy, hallucination rates, and abstention in Gemma 4 12B.
 
-Evaluates on [TruthfulQA](https://huggingface.co/datasets/truthfulqa/truthful_qa)
-(generation split) — chosen because it's designed to elicit confident-but-false
-answers, close to the proposal's zero-resource/factual hallucination category.
-Each generated answer is scored by a second Claude call (LLM-as-judge) against
-TruthfulQA's correct/incorrect reference answers.
+## Overview
 
-The model under test is pluggable — see Backends below — so the harness can run
-against Claude today and swap to Gemma (the proposal's actual target) via a hosted
-API or local GPU later without changing any other code.
+This experiment evaluates `google/gemma-4-12B-it` on the [SimpleQA](https://huggingface.co/datasets/OpenEvals/SimpleQA) benchmark across six configurations:
 
-## Status
+| Precision | Baseline | Uncertainty-aware |
+|---|---|---|
+| BF16 | ✓ | ✓ |
+| FP8 | ✓ | ✓ |
+| FP4 | ✓ | ✓ |
 
-**Verified working: the `--mock` path only.** It exercises the full pipeline
-(TruthfulQA download → generation → judging → aggregation → JSONL output) with
-hardcoded responses and a heuristic judge — no API key, no network call to
-Anthropic or HF Inference. See the smoke test below.
+- **Baseline:** Standard factual question answering.
+- **Uncertainty-aware:** Instructs the model to respond with "I don't know" when insufficiently confident.
 
-The real backends (`anthropic`, `hf_inference`, `hf_local`) are implemented but
-**not yet run end-to-end** — this machine has no `ANTHROPIC_API_KEY` configured.
-Once a key is in `.env`, drop `--mock` and they should work, but treat that as
-unverified until someone actually runs it.
+FP8 uses fine-grained quantization through Transformers, while FP4 uses bitsandbytes.
+
+## Evaluation
+
+Responses are evaluated using Nemotron 3 Ultra through OpenRouter and classified as **correct**, **incorrect**, or **not attempted**.
+
+Key metrics include:
+
+- **Accuracy:** Fraction of questions answered correctly.
+- **Hallucination rate:** Fraction of attempted answers that are incorrect.
+- **Abstention rate:** Fraction of questions the model declines to answer.
+- **Coverage:** Fraction of questions attempted.
+- **SimpleQA F-score:** Harmonic mean of overall and attempted accuracy.
+
+The pipeline also computes bootstrap confidence intervals and generates comparison plots.
 
 ## Setup
 
-```bash
-cd 11785_idl_hallcino
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e .
-```
-
-For the local-GPU backend only: `pip install -e ".[local]"`.
-
-## Run — verified (mock, no API key)
+Install dependencies:
 
 ```bash
-python -m hallcino.run_baseline --mock --n 5
+pip install "transformers>=5.10.1" datasets accelerate \
+  openai huggingface_hub matplotlib numpy pandas scipy \
+  packaging "bitsandbytes>=0.46.1"
 ```
 
-Hardcoded canned responses stand in for generation, and a string-overlap
-heuristic stands in for the judge (`backends/mock_backend.py`,
-`judge.py::MockJudge`). Use this to confirm the harness itself (data loading,
-loop, output format) is wired correctly.
-
-## Run — real (unverified, needs a key)
+Configure credentials:
 
 ```bash
-cp .env.example .env   # fill in ANTHROPIC_API_KEY (and HF_TOKEN if using HF backends)
-python -m hallcino.run_baseline --n 50
+export HF_TOKEN="your_huggingface_token"
+export OPENROUTER_API_KEY="your_openrouter_api_key"
 ```
 
-Key flags (all also configurable via `.env`, see `.env.example`):
+Run on a CUDA-enabled GPU:
 
-| Flag | Env var | Meaning |
-|---|---|---|
-| `--backend` | `HALLCINO_BACKEND` | `anthropic` \| `hf_inference` \| `hf_local` |
-| `--model` | `HALLCINO_MODEL` | model id for the chosen backend |
-| `--n` | — | number of TruthfulQA questions to sample |
-| `--mock` | — | bypass everything above: hardcoded responses, no key needed |
+```bash
+python simpleqa_quantization.py
+```
 
-Judge model is separate: `HALLCINO_JUDGE_MODEL` (always calls Anthropic, regardless
-of which backend is under test — `--mock` is the only way to skip this).
+By default, the experiment evaluates 256 questions. Set `MAX_QUESTIONS = None` for the full benchmark.
 
-Output: a summary hallucination rate printed to stdout, plus a per-example JSONL
-file in `results/` (question, answer, verdict, rationale).
+## Outputs
 
-## Backends
+Results are saved to `simpleqa_gemma4_quant/`, including:
 
-All real backends implement the same `generate(prompt) -> GenerationResult`
-interface (`src/hallcino/backends/base.py`), so switching is a config change:
+- `gemma_outputs.json` — Generated model responses
+- `judge_results.json` — LLM judge classifications
+- `judge_details.csv` — Per-question evaluation details
+- `metrics.csv` — Aggregate performance metrics
+- `results_table.tex` — LaTeX results table
+- Bootstrap confidence intervals and comparison plots
 
-- **`anthropic`** — calls the Claude API. Default, no GPU required. Stand-in for
-  validating the pipeline/metrics before Gemma is wired up. *Unverified — no key
-  on this machine yet.*
-- **`hf_inference`** — calls a model (e.g. Gemma) hosted via HuggingFace Inference,
-  no local GPU required. *Unverified.*
-- **`hf_local`** — loads a model locally via `transformers` (`device_map="auto"`).
-  Requires an actual GPU with enough VRAM for the chosen dtype. *Unverified.*
-- **`mock`** — hardcoded canned responses, zero network calls. **Verified working.**
-
-## Next steps (per proposal)
-
-This covers Baseline 1 only. Not yet implemented: the entropy-based detector
-baseline, the raw-residual-activation-probe baseline, and the quantization sweep
-(BF16/FP8/NVFP4).
+The pipeline supports automatic checkpointing, resuming interrupted runs, quantization validation, and CUDA out-of-memory recovery.
