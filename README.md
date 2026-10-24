@@ -1,4 +1,4 @@
-# Hallucinot
+# HalluciNOT
 
 ## Baseline
 
