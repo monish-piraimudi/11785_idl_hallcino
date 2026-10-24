@@ -1,0 +1,46 @@
+metric,comparison,difference,CI lower,CI upper
+Overall accuracy,bf16/uncertain - bf16/baseline,0.0078125,-0.01171875,0.02734375
+Overall accuracy,fp8/uncertain - fp8/baseline,0.00390625,-0.015625,0.0234375
+Overall accuracy,fp4/uncertain - fp4/baseline,-0.00390625,-0.01953125,0.0078125
+Overall accuracy,fp8/baseline - bf16/baseline,0.00390625,-0.0078125,0.01953125
+Overall accuracy,fp4/baseline - bf16/baseline,-0.00390625,-0.0234375,0.01171875
+Overall accuracy,fp4/baseline - fp8/baseline,-0.0078125,-0.01953125,0.0
+Overall accuracy,fp8/uncertain - bf16/uncertain,0.0,-0.01171875,0.01171875
+Overall accuracy,fp4/uncertain - bf16/uncertain,-0.015625,-0.03515625,0.00390625
+Overall accuracy,fp4/uncertain - fp8/uncertain,-0.015625,-0.03515625,0.00390625
+Hallucination rate among attempted,bf16/uncertain - bf16/baseline,-0.013567684242984823,-0.04737153823937116,0.021360732871202926
+Hallucination rate among attempted,fp8/uncertain - fp8/baseline,-0.007462686567164201,-0.04557408668633992,0.03106265526774744
+Hallucination rate among attempted,fp4/uncertain - fp4/baseline,0.008126721763085376,-0.018825472772841155,0.038399337967560364
+Hallucination rate among attempted,fp8/baseline - bf16/baseline,-0.008327925589444063,-0.034897235294980074,0.01538461538461533
+Hallucination rate among attempted,fp4/baseline - bf16/baseline,0.004192118816624735,-0.029616192188098786,0.04095005548244758
+Hallucination rate among attempted,fp4/baseline - fp8/baseline,0.012520044406068798,-0.003911896529257236,0.0371488859926767
+Hallucination rate among attempted,fp8/uncertain - bf16/uncertain,-0.0022229279136234403,-0.02265024278654003,0.01946836615441266
+Hallucination rate among attempted,fp4/uncertain - bf16/uncertain,0.025886524822694934,-0.009902516076456614,0.060941652723985607
+Hallucination rate among attempted,fp4/uncertain - fp8/uncertain,0.028109452736318374,-0.009327434761260916,0.06429147465437796
+Coverage,bf16/uncertain - bf16/baseline,0.01171875,-0.05078125,0.07421875
+Coverage,fp8/uncertain - fp8/baseline,0.0,-0.0625,0.05859375
+Coverage,fp4/uncertain - fp4/baseline,-0.00390625,-0.0625,0.0546875
+Coverage,fp8/baseline - bf16/baseline,-0.015625,-0.04296875,0.01171875
+Coverage,fp4/baseline - bf16/baseline,-0.06640625,-0.11328125,-0.01953125
+Coverage,fp4/baseline - fp8/baseline,-0.05078125,-0.09375,-0.0078125
+Coverage,fp8/uncertain - bf16/uncertain,-0.02734375,-0.05859375,0.0
+Coverage,fp4/uncertain - bf16/uncertain,-0.08203125,-0.13671875,-0.03125
+Coverage,fp4/uncertain - fp8/uncertain,-0.0546875,-0.109375,-0.00390625
+Abstention rate,bf16/uncertain - bf16/baseline,-0.01171875,-0.07421875,0.05078125
+Abstention rate,fp8/uncertain - fp8/baseline,0.0,-0.05859375,0.0625
+Abstention rate,fp4/uncertain - fp4/baseline,0.0078125,-0.05078125,0.06640625
+Abstention rate,fp8/baseline - bf16/baseline,0.015625,-0.01171875,0.04296875
+Abstention rate,fp4/baseline - bf16/baseline,0.0625,0.015625,0.109375
+Abstention rate,fp4/baseline - fp8/baseline,0.046875,0.00390625,0.08984375
+Abstention rate,fp8/uncertain - bf16/uncertain,0.02734375,0.0,0.05859375
+Abstention rate,fp4/uncertain - bf16/uncertain,0.08203125,0.03125,0.13671875
+Abstention rate,fp4/uncertain - fp8/uncertain,0.0546875,0.00390625,0.109375
+SimpleQA F-score,bf16/uncertain - bf16/baseline,0.009922131723970384,-0.015035753553041943,0.03367002952442091
+SimpleQA F-score,fp8/uncertain - fp8/baseline,0.005128205128205134,-0.020923270993280646,0.030953163392407557
+SimpleQA F-score,fp4/uncertain - fp4/baseline,-0.0052768214910548,-0.021708998347537298,0.011024994467946235
+SimpleQA F-score,fp8/baseline - bf16/baseline,0.00533645711310686,-0.01036452313858913,0.024714319976301264
+SimpleQA F-score,fp4/baseline - bf16/baseline,-0.004389449164523555,-0.02929880609357435,0.016991491491491484
+SimpleQA F-score,fp4/baseline - fp8/baseline,-0.009725906277630415,-0.02557403202743408,0.0008617365045210352
+SimpleQA F-score,fp8/uncertain - bf16/uncertain,0.0005425305173416099,-0.014640865739561387,0.015456679816297688
+SimpleQA F-score,fp4/uncertain - bf16/uncertain,-0.019588402379548737,-0.04400327739900143,0.005729855291810935
+SimpleQA F-score,fp4/uncertain - fp8/uncertain,-0.02013093289689035,-0.04458543609491335,0.0055899383790186784

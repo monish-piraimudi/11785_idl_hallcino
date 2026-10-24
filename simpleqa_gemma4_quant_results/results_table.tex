@@ -1,0 +1,36 @@
+\begin{table*}[t]
+\centering
+\caption{Gemma 4 12B factuality on SimpleQA (256 questions) across weight precisions and system prompts. Correctness labels are assigned by nemotron-3-ultra-550b-a55b.}
+\label{tab:simpleqa_quant_comparison}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l rr rr rr}
+\toprule
+Metric & \multicolumn{2}{c}{BF16} & \multicolumn{2}{c}{FP8} & \multicolumn{2}{c}{FP4} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+ & Baseline & Uncertainty-aware & Baseline & Uncertainty-aware & Baseline & Uncertainty-aware \\
+\midrule
+\textbf{Questions} & 256 & 256 & 256 & 256 & 256 & 256 \\
+\textbf{Correct} & 4 & 6 & 5 & 6 & 3 & 2 \\
+\textbf{Incorrect} & 134 & 135 & 129 & 128 & 118 & 118 \\
+\textbf{Abstained} & 100 & 97 & 104 & 104 & 116 & 118 \\
+Overall accuracy & 1.56\% & 2.34\% & 1.95\% & 2.34\% & 1.17\% & 0.78\% \\
+Accuracy among attempted & 2.90\% & 4.26\% & 3.73\% & 4.48\% & 2.48\% & 1.67\% \\
+Hallucination rate (attempted) & 97.10\% & 95.74\% & 96.27\% & 95.52\% & 97.52\% & 98.33\% \\
+Coverage & 53.91\% & 55.08\% & 52.34\% & 52.34\% & 47.27\% & 46.88\% \\
+Abstention rate & 39.06\% & 37.89\% & 40.62\% & 40.62\% & 45.31\% & 46.09\% \\
+SimpleQA F-score & 0.020 & 0.030 & 0.026 & 0.031 & 0.016 & 0.011 \\
+Unsupported-claim rate & 23.11\% & 15.55\% & 22.69\% & 15.13\% & 21.10\% & 14.71\% \\
+Invalid-response rate & 0.39\% & 0.39\% & 0.39\% & 0.39\% & 0.78\% & 0.00\% \\
+Truncated-response rate & 6.64\% & 0.78\% & 5.86\% & 0.39\% & 12.11\% & 1.95\% \\
+Mean response length (words) & 39.93 & 3.32 & 41.16 & 3.33 & 41.91 & 4.48 \\
+Mean latency (s/question) & 0.16 & 0.08 & 0.25 & 0.06 & 0.16 & 0.12 \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{1mm}
+\begin{minipage}{0.96\linewidth}
+\footnotesize
+Hallucination rate is the fraction of attempted answers labeled incorrect. Coverage is the fraction of all questions attempted. Overall accuracy counts correct answers over all questions, including abstentions. The SimpleQA F-score is the harmonic mean of overall accuracy and accuracy among attempted answers. Unsupported-claim rate and correctness are automatic judge estimates and require audit. Quantization methods -- BF16: BF16 weights (reference); FP8: on-the-fly block-wise FP8 (E4M3) via transformers FineGrainedFP8Config; FP4: on-the-fly weight-only FP4 (E2M1) via bitsandbytes.
+\end{minipage}
+\end{table*}
