@@ -1,9 +1,8 @@
-# SimpleQA Quantization and Hallucination Evaluation
+# Hallucinot
+
+## Baseline
 
 A research pipeline evaluating how **model quantization and uncertainty-aware prompting** affect factual accuracy, hallucination rates, and abstention in Gemma 4 12B.
-
-## Overview
-
 This experiment evaluates `google/gemma-4-12B-it` on the [SimpleQA](https://huggingface.co/datasets/OpenEvals/SimpleQA) benchmark across six configurations:
 
 | Precision | Baseline | Uncertainty-aware |
