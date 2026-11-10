@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install CPU PyTorch and project
+        run: |
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.11.0
+          python -m pip install -e ".[test]"
+      - name: Compile and test
+        run: |
+          python -m compileall -q hallucinot tests
+          python -m pytest -q
+      - name: Run CPU fixture smoke workflow
+        run: python -m hallucinot debug --fixture --output runs/ci-debug --max-new-tokens 8

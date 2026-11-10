@@ -1,0 +1,10 @@
+{"id":"debug-gold-symbol","question":"What is the chemical symbol for gold?","answer":"Au","source_metadata":{"fixture":"debug"}}
+{"id":"debug-pride-prejudice","question":"Who wrote Pride and Prejudice?","answer":"Jane Austen","source_metadata":{"fixture":"debug"}}
+{"id":"debug-triangle-sides","question":"How many sides does a triangle have?","answer":"3","source_metadata":{"fixture":"debug"}}
+{"id":"debug-japan-capital","question":"What is the capital of Japan?","answer":"Tokyo","source_metadata":{"fixture":"debug"}}
+{"id":"debug-red-planet","question":"Which planet is commonly called the Red Planet?","answer":"Mars","source_metadata":{"fixture":"debug"}}
+{"id":"debug-ocean","question":"What is the largest ocean on Earth?","answer":"Pacific Ocean","source_metadata":{"fixture":"debug"}}
+{"id":"debug-water-boiling","question":"At sea level, what is the boiling point of water in Celsius?","answer":"100 °C","source_metadata":{"fixture":"debug"}}
+{"id":"debug-cote-divoire","question":"What is the capital of Côte d’Ivoire?","answer":"Yamoussoukro","source_metadata":{"fixture":"debug"}}
+{"id":"debug-vivaldi","question":"Who composed The Four Seasons?","answer":"Antonio Vivaldi","source_metadata":{"fixture":"debug"}}
+{"id":"debug-gracias","question":"In which language does “gracias” mean “thank you”?","answer":"Spanish","source_metadata":{"fixture":"debug"}}
