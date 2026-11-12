@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">A Jacobian lens is estimated from frozen-model activation gradients on separate text</title>
+  <desc id="desc">Separate calibration passages run through the frozen text stack. Source block outputs at layer ell are differentiated against final-block residual outputs. For each source token, gradients from eligible same-or-later target positions are summed, then source positions and prompts are averaged. The result is a dense matrix J ell.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#53657a"/></marker>
+    <style>
+      .bg{fill:#f7f9fc}.title{font:700 27px Arial,sans-serif;fill:#15253b}.sub{font:15px Arial,sans-serif;fill:#53657a}
+      .h{font:700 16px Arial,sans-serif;fill:#15253b}.body{font:14px Arial,sans-serif;fill:#263a52}.small{font:12px Arial,sans-serif;fill:#53657a}.math{font:17px Georgia,serif;fill:#15253b}
+      .box{stroke-width:1.6;rx:12}.corpus{fill:#e8eef8;stroke:#3d68a8}.model{fill:#e3f2ef;stroke:#168176}.result{fill:#fff3dc;stroke:#ce9223}.note{fill:#edf3f8;stroke:#94a5b7}.warn{fill:#fff0ed;stroke:#c85c48}
+      .line{fill:none;stroke:#53657a;stroke-width:2;marker-end:url(#arrow)}.cellon{fill:#76a7e3;stroke:#3d68a8;stroke-width:1}.celloff{fill:#fff;stroke:#cbd5e1;stroke-width:1}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="800"/>
+  <text class="title" x="36" y="45">Lens fitting estimates a transport matrix with activation gradients</text>
+  <text class="sub" x="36" y="72">It does not train a random adapter. The model weights stay frozen while the activation graph stays differentiable.</text>
+
+  <rect class="box corpus" x="38" y="125" width="225" height="132"/>
+  <text class="h" x="59" y="159">Calibration corpus</text>
+  <text class="body" x="59" y="190">separate text passages</text>
+  <text class="small" x="59" y="218">never QA references or test items</text>
+  <text class="small" x="59" y="240">about 1,000 × 128 tokens in paper</text>
+
+  <rect class="box model" x="308" y="125" width="520" height="132"/>
+  <text class="h" x="332" y="159">Gemma text stack, weights frozen</text>
+  <rect x="337" y="184" width="50" height="39" rx="5" fill="#d5e8e3" stroke="#168176"/>
+  <text class="small" x="347" y="208">block 0</text>
+  <rect x="407" y="184" width="50" height="39" rx="5" fill="#d5e8e3" stroke="#168176"/>
+  <text class="small" x="417" y="208">block ℓ</text>
+  <rect x="477" y="184" width="54" height="39" rx="5" fill="#d5e8e3" stroke="#168176"/>
+  <text class="small" x="486" y="208">later</text>
+  <rect x="551" y="184" width="80" height="39" rx="5" fill="#fde8b8" stroke="#ce9223"/>
+  <text class="small" x="560" y="208">target 47</text>
+  <rect x="652" y="184" width="145" height="39" rx="5" fill="#edf3f8" stroke="#94a5b7"/>
+  <text class="small" x="665" y="208">before final RMSNorm</text>
+  <path class="line" d="M263 191 L308 191"/>
+  <path class="line" d="M828 191 L885 191"/>
+
+  <rect class="box result" x="885" y="125" width="275" height="132"/>
+  <text class="h" x="908" y="159">Saved dense matrices</text>
+  <text class="body" x="908" y="190">J₈, J₁₆, J₃₂ ∈ ℝ³⁸⁴⁰ˣ³⁸⁴⁰</text>
+  <text class="small" x="908" y="218">float32, safetensors + provenance</text>
+  <text class="small" x="908" y="240">fit once, reuse for collection</text>
+
+  <text class="h" x="42" y="312">For a fixed source position t, sum eligible target-position effects</text>
+  <text class="small" x="42" y="337">Rows are target positions t′. Columns are source positions t. Blue cells satisfy t′ ≥ t.</text>
+  <g transform="translate(120 390)">
+    <text class="small" transform="rotate(-90 -61 72)" x="-61" y="72">target position t′</text>
+    <text class="small" x="89" y="228">source position t</text>
+    <text class="small" x="-7" y="19">4</text><text class="small" x="-7" y="59">3</text><text class="small" x="-7" y="99">2</text><text class="small" x="-7" y="139">1</text><text class="small" x="-7" y="179">0</text>
+    <text class="small" x="28" y="207">0</text><text class="small" x="68" y="207">1</text><text class="small" x="108" y="207">2</text><text class="small" x="148" y="207">3</text><text class="small" x="188" y="207">4</text>
+    <rect class="cellon" x="20" y="20" width="36" height="36"/><rect class="cellon" x="60" y="20" width="36" height="36"/><rect class="cellon" x="100" y="20" width="36" height="36"/><rect class="cellon" x="140" y="20" width="36" height="36"/><rect class="cellon" x="180" y="20" width="36" height="36"/>
+    <rect class="cellon" x="20" y="60" width="36" height="36"/><rect class="cellon" x="60" y="60" width="36" height="36"/><rect class="cellon" x="100" y="60" width="36" height="36"/><rect class="cellon" x="140" y="60" width="36" height="36"/><rect class="celloff" x="180" y="60" width="36" height="36"/>
+    <rect class="cellon" x="20" y="100" width="36" height="36"/><rect class="cellon" x="60" y="100" width="36" height="36"/><rect class="cellon" x="100" y="100" width="36" height="36"/><rect class="celloff" x="140" y="100" width="36" height="36"/><rect class="celloff" x="180" y="100" width="36" height="36"/>
+    <rect class="cellon" x="20" y="140" width="36" height="36"/><rect class="cellon" x="60" y="140" width="36" height="36"/><rect class="celloff" x="100" y="140" width="36" height="36"/><rect class="celloff" x="140" y="140" width="36" height="36"/><rect class="celloff" x="180" y="140" width="36" height="36"/>
+    <rect class="cellon" x="20" y="180" width="36" height="36"/><rect class="celloff" x="60" y="180" width="36" height="36"/><rect class="celloff" x="100" y="180" width="36" height="36"/><rect class="celloff" x="140" y="180" width="36" height="36"/><rect class="celloff" x="180" y="180" width="36" height="36"/>
+  </g>
+
+  <rect class="box note" x="410" y="368" width="340" height="245"/>
+  <text class="h" x="434" y="403">Estimator in one line</text>
+  <text class="math" x="434" y="446">Jℓ[i,j] = meanₚ meanₜ</text>
+  <text class="math" x="434" y="478">Σₜ′≥ₜ ∂hL,t′[i] / ∂hℓ,t[j]</text>
+  <line x1="434" y1="497" x2="724" y2="497" stroke="#cbd5e1"/>
+  <text class="body" x="434" y="528">Target positions are summed.</text>
+  <text class="body" x="434" y="552">Source positions are averaged.</text>
+  <text class="small" x="434" y="586">Default excludes the first 16 and final positions.</text>
+
+  <rect class="box result" x="790" y="368" width="370" height="245"/>
+  <text class="h" x="814" y="403">Collection applies the saved transport</text>
+  <text class="math" x="814" y="450">zℓ,t = Jℓ hℓ,t</text>
+  <text class="body" x="814" y="488">feature shape per token: [layers, 3840]</text>
+  <text class="body" x="814" y="520">for layers [8, 16, 32]: [3, 3840]</text>
+  <text class="small" x="814" y="557">Dense first-order transport, not a sparse</text>
+  <text class="small" x="814" y="578">J-space decomposition or classifier feature map.</text>
+
+  <rect class="box warn" x="38" y="670" width="1122" height="82"/>
+  <text class="h" x="62" y="703">Compute cost is substantial</text>
+  <text class="body" x="62" y="731">d = 3,840 and dim_batch = 8 means 480 backward passes per prompt, about 480,000 for 1,000 prompts.</text>
+</svg>

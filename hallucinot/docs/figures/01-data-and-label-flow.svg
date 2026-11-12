@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Question sources become labeled trajectory sequences only after judging model outputs</title>
+  <desc id="desc">SimpleQA and EasyballQA questions enter Gemma without their reference answers. Generation produces answer tokens and Jacobian-lens features in parallel. An external judge compares the answer with the question and reference. The label and trajectory join by example ID before grouped train, validation, and test splits.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#52647a"/>
+    </marker>
+    <style>
+      .bg{fill:#f7f9fc}.title{font:700 27px Arial,sans-serif;fill:#15253b}.sub{font:15px Arial,sans-serif;fill:#53657a}
+      .h{font:700 16px Arial,sans-serif;fill:#15253b}.body{font:14px Arial,sans-serif;fill:#263a52}.small{font:12px Arial,sans-serif;fill:#53657a}
+      .source{fill:#e8eef8;stroke:#3d68a8}.model{fill:#e3f2ef;stroke:#168176}.feature{fill:#e3f2ef;stroke:#168176}.answer{fill:#fff3dc;stroke:#ce9223}.judge{fill:#f0eafb;stroke:#795ab4}.join{fill:#edf3f8;stroke:#52647a}.warn{fill:#fff0ed;stroke:#c85c48}
+      .box{stroke-width:1.6;rx:12}.line{fill:none;stroke:#52647a;stroke-width:2;marker-end:url(#arrow)}.dash{fill:none;stroke:#8a6bb8;stroke-width:2;stroke-dasharray:7 6;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="800"/>
+  <text class="title" x="36" y="45">The dataset label comes from the generated answer, not the question source</text>
+  <text class="sub" x="36" y="72">Join judge labels and J-lens features by stable example ID after generation.</text>
+
+  <rect class="box source" x="34" y="120" width="220" height="155"/>
+  <text class="h" x="54" y="151">Question sources</text>
+  <text class="body" x="54" y="181">SimpleQA</text>
+  <text class="small" x="54" y="201">Fact-seeking benchmark questions</text>
+  <line x1="54" y1="216" x2="232" y2="216" stroke="#bdcbe0"/>
+  <text class="body" x="54" y="240">EasyballQA</text>
+  <text class="small" x="54" y="259">Synthetic easy questions</text>
+
+  <rect class="box source" x="34" y="309" width="220" height="122"/>
+  <text class="h" x="54" y="340">Input record</text>
+  <text class="body" x="54" y="370">id, question, answer</text>
+  <text class="small" x="54" y="395">Answer stays out of the prompt</text>
+  <text class="small" x="54" y="414">Metadata follows the example ID</text>
+
+  <rect class="box warn" x="34" y="466" width="220" height="124"/>
+  <text class="h" x="54" y="497">Label rule</text>
+  <text class="body" x="54" y="526">Do not assign 1 by source</text>
+  <text class="body" x="54" y="548">or 0 by apparent difficulty.</text>
+  <text class="small" x="54" y="572">Judge each target-model answer.</text>
+
+  <rect class="box source" x="322" y="174" width="216" height="180"/>
+  <text class="h" x="344" y="207">Prompt builder</text>
+  <text class="body" x="344" y="239">question only</text>
+  <text class="small" x="344" y="266">Same chat template</text>
+  <text class="small" x="344" y="288">Short-answer instruction</text>
+  <text class="small" x="344" y="322">Reference answer bypasses</text>
+  <text class="small" x="344" y="340">this path</text>
+
+  <rect class="box model" x="602" y="174" width="216" height="180"/>
+  <text class="h" x="624" y="207">Gemma 4 12B</text>
+  <text class="body" x="624" y="239">local FP8 checkpoint</text>
+  <text class="small" x="624" y="266">greedy, one token at a time</text>
+  <text class="small" x="624" y="288">KV cache, batch size one</text>
+  <text class="small" x="624" y="322">Question and reference never</text>
+  <text class="small" x="624" y="340">share a prompt</text>
+
+  <rect class="box answer" x="882" y="106" width="270" height="122"/>
+  <text class="h" x="904" y="139">Generated answer</text>
+  <text class="body" x="904" y="169">text, token IDs, token pieces</text>
+  <text class="small" x="904" y="198">Saved as one answer sequence</text>
+
+  <rect class="box judge" x="882" y="270" width="270" height="155"/>
+  <text class="h" x="904" y="303">External judge stage</text>
+  <text class="body" x="904" y="333">question + answer + reference</text>
+  <text class="small" x="904" y="360">correct / incorrect / not attempted</text>
+  <text class="small" x="904" y="383">retain rubric, judge version, audit</text>
+  <text class="small" x="904" y="407">This stage is outside the collector</text>
+
+  <rect class="box feature" x="602" y="414" width="216" height="142"/>
+  <text class="h" x="624" y="447">Parallel feature capture</text>
+  <text class="body" x="624" y="477">block hooks at selected layers</text>
+  <text class="small" x="624" y="505">per-step Jℓ hℓ,t vectors</text>
+  <text class="small" x="624" y="529">plus token alignment and masks</text>
+
+  <rect class="box join" x="882" y="481" width="270" height="102"/>
+  <text class="h" x="904" y="515">Join on example ID</text>
+  <text class="body" x="904" y="545">trajectory Xᵢ + answer label Yᵢ</text>
+  <text class="small" x="904" y="568">also retain group and source metadata</text>
+
+  <rect class="box join" x="322" y="640" width="830" height="100"/>
+  <text class="h" x="346" y="674">Grouped train / validation / test split</text>
+  <text class="body" x="346" y="705">Keep related questions together. Keep both labels represented within each source and topic where possible.</text>
+  <text class="small" x="346" y="727">A separate source-held-out evaluation can test transfer to a new benchmark.</text>
+
+  <path class="line" d="M144 275 L144 309"/>
+  <path class="line" d="M254 350 C290 350 286 264 322 264"/>
+  <path class="line" d="M538 264 L602 264"/>
+  <path class="line" d="M818 233 C850 233 850 167 882 167"/>
+  <path class="line" d="M818 312 C854 312 851 344 882 344"/>
+  <path class="dash" d="M254 395 L855 395 L882 395"/>
+  <path class="line" d="M710 354 L710 414"/>
+  <path class="line" d="M818 485 C850 485 849 527 882 527"/>
+  <path class="line" d="M1017 425 L1017 481"/>
+  <path class="line" d="M1017 583 L1017 640"/>
+
+  <text class="small" x="36" y="773">Blue: input data   Green: model and features   Purple: external annotation   Amber: generated output</text>
+</svg>

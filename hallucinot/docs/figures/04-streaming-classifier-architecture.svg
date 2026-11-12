@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">A compact causal GRU is a candidate for early warning from Jacobian-lens trajectories</title>
+  <desc id="desc">Each token step has three layer vectors of 3840 features. Fit a per-layer PCA on training data only and keep 32 dimensions per layer, giving 96 features per step. A unidirectional GRU with hidden size 64 processes the prefix and outputs the probability that the completed answer will be judged incorrect. A threshold can stop generation before the next token. This predicts eventual answer outcome and does not localize a false token.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#52647a"/></marker>
+    <style>
+      .bg{fill:#f7f9fc}.title{font:700 27px Arial,sans-serif;fill:#15253b}.sub{font:15px Arial,sans-serif;fill:#53657a}
+      .h{font:700 16px Arial,sans-serif;fill:#15253b}.body{font:14px Arial,sans-serif;fill:#263a52}.small{font:12px Arial,sans-serif;fill:#53657a}.math{font:16px Georgia,serif;fill:#15253b}
+      .box{stroke-width:1.5;rx:11}.data{fill:#e8eef8;stroke:#3d68a8}.reduce{fill:#edf3f8;stroke:#7e91a6}.model{fill:#e3f2ef;stroke:#168176}.risk{fill:#fff3dc;stroke:#ce9223}.warning{fill:#fff0ed;stroke:#c85c48}.line{fill:none;stroke:#52647a;stroke-width:2;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="800"/>
+  <text class="title" x="36" y="45">For early stopping, predict answer risk from the causal prefix</text>
+  <text class="sub" x="36" y="72">This is a candidate architecture to test, not an empirically selected optimum.</text>
+
+  <rect class="box data" x="38" y="155" width="230" height="170"/>
+  <text class="h" x="61" y="190">Current step feature xₜ</text>
+  <text class="body" x="61" y="226">3 selected layers × 3840</text>
+  <text class="body" x="61" y="253">= 11,520 raw values</text>
+  <text class="small" x="61" y="286">prediction-step aligned</text>
+  <text class="small" x="61" y="308">computed before yₜ is emitted</text>
+
+  <rect class="box reduce" x="315" y="155" width="230" height="170"/>
+  <text class="h" x="338" y="190">Train-only reduction</text>
+  <text class="body" x="338" y="226">PCA per layer: 32 dims</text>
+  <text class="body" x="338" y="253">3 × 32 = 96 values per step</text>
+  <text class="small" x="338" y="286">fit on training groups only</text>
+  <text class="small" x="338" y="308">reuse unchanged at validation/test</text>
+
+  <rect class="box model" x="592" y="155" width="240" height="170"/>
+  <text class="h" x="616" y="190">Causal GRU</text>
+  <text class="body" x="616" y="226">input size 96</text>
+  <text class="body" x="616" y="253">hidden size 64</text>
+  <text class="small" x="616" y="286">unidirectional state hₜ</text>
+  <text class="small" x="616" y="308">reset state at each example</text>
+
+  <rect class="box risk" x="879" y="155" width="280" height="170"/>
+  <text class="h" x="903" y="190">Risk head at each step</text>
+  <text class="math" x="903" y="230">pₜ = sigmoid(wᵀ hₜ + b)</text>
+  <text class="body" x="903" y="263">P(final answer judged incorrect</text>
+  <text class="body" x="903" y="285">given state available before yₜ)</text>
+  <text class="small" x="903" y="311">eventual outcome, not token truth</text>
+  <path class="line" d="M268 240 L315 240"/><path class="line" d="M545 240 L592 240"/><path class="line" d="M832 240 L879 240"/>
+
+  <rect class="box risk" x="879" y="385" width="280" height="110"/>
+  <text class="h" x="903" y="420">Online decision</text>
+  <text class="body" x="903" y="451">if pₜ ≥ validation threshold τ</text>
+  <text class="small" x="903" y="476">stop before emitting yₜ</text>
+  <path class="line" d="M1019 325 L1019 385"/>
+
+  <rect class="box warning" x="38" y="385" width="790" height="150"/>
+  <text class="h" x="62" y="420">Parameter count is manageable after reduction</text>
+  <text class="body" x="62" y="455">GRU(96, 64): 31,104 trainable parameters. Linear risk head: 65.</text>
+  <text class="body" x="62" y="483">Total: 31,169, excluding the fixed train-fitted PCA transform.</text>
+  <text class="small" x="62" y="513">For comparison, raw 11,520 → 64 → 1 MLP has about 737,409 parameters.</text>
+
+  <rect class="box data" x="38" y="580" width="535" height="142"/>
+  <text class="h" x="62" y="615">Small MLP baseline</text>
+  <text class="body" x="62" y="649">96 → 32 → 1 sigmoid, about 3,137 trainable parameters</text>
+  <text class="small" x="62" y="678">Scores each step independently. It does not remember prior trajectory rows.</text>
+  <text class="small" x="62" y="701">Compare it with the GRU using grouped validation.</text>
+
+  <rect class="box warning" x="600" y="580" width="559" height="142"/>
+  <text class="h" x="624" y="615">A final-answer judge label cannot identify a bad token</text>
+  <text class="body" x="624" y="649">Broadcasting Yᵢ over prefixes trains prediction of eventual answer outcome.</text>
+  <text class="small" x="624" y="678">To claim token-level localization, annotate unsupported claim spans and align</text>
+  <text class="small" x="624" y="701">those spans to generation steps. A factual claim is usually several tokens.</text>
+</svg>

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Each trajectory row is the pre-token state that predicts one generated token</title>
+  <desc id="desc">The prompt occupies token positions zero through P minus one. Row zero uses the last prompt activation to predict token y zero. Row one uses the activation after consuming y zero to predict y one. The feature tensor has generated step, selected layer, and hidden feature axes. Special tokens retain rows with masks.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#52647a"/></marker>
+    <style>
+      .bg{fill:#f7f9fc}.title{font:700 27px Arial,sans-serif;fill:#15253b}.sub{font:15px Arial,sans-serif;fill:#53657a}
+      .h{font:700 16px Arial,sans-serif;fill:#15253b}.body{font:14px Arial,sans-serif;fill:#263a52}.small{font:12px Arial,sans-serif;fill:#53657a}
+      .box{stroke-width:1.5;rx:10}.prompt{fill:#e8eef8;stroke:#3d68a8}.answer{fill:#fff3dc;stroke:#ce9223}.state{fill:#e3f2ef;stroke:#168176}.special{fill:#f0eafb;stroke:#795ab4}.neutral{fill:#fff;stroke:#cbd5e1}
+      .line{fill:none;stroke:#52647a;stroke-width:1.8;marker-end:url(#arrow)}.grid{stroke:#d7dee8;stroke-width:1}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="760"/>
+  <text class="title" x="36" y="45">Row t captures the state that predicts generated token t</text>
+  <text class="sub" x="36" y="72">The feature is computed before that token is fed back into the model.</text>
+
+  <text class="small" x="56" y="125">Prompt token positions</text>
+  <text class="small" x="720" y="125">Generated tokens</text>
+  <g>
+    <rect class="box prompt" x="56" y="145" width="126" height="58"/><text class="body" x="92" y="180">x₀</text>
+    <rect class="box prompt" x="190" y="145" width="126" height="58"/><text class="body" x="226" y="180">x₁</text>
+    <rect class="box neutral" x="324" y="145" width="126" height="58"/><text class="body" x="357" y="180">…</text>
+    <rect class="box prompt" x="458" y="145" width="152" height="58"/><text class="body" x="478" y="180">xP−1</text>
+    <rect class="box answer" x="696" y="145" width="126" height="58"/><text class="body" x="730" y="180">y₀</text>
+    <rect class="box answer" x="830" y="145" width="126" height="58"/><text class="body" x="864" y="180">y₁</text>
+    <rect class="box answer" x="964" y="145" width="126" height="58"/><text class="body" x="998" y="180">y₂</text>
+  </g>
+  <text class="small" x="463" y="222">P − 1</text>
+
+  <text class="h" x="56" y="275">Generation step</text>
+  <text class="h" x="250" y="275">Captured source state</text>
+  <text class="h" x="546" y="275">Token predicted by this row</text>
+  <text class="h" x="862" y="275">Saved feature row</text>
+  <line class="grid" x1="56" y1="290" x2="1145" y2="290"/>
+
+  <text class="body" x="80" y="335">row 0</text>
+  <rect class="box state" x="250" y="306" width="252" height="54"/>
+  <text class="body" x="276" y="339">activation at prompt position P − 1</text>
+  <rect class="box answer" x="546" y="306" width="212" height="54"/>
+  <text class="body" x="619" y="339">y₀</text>
+  <rect class="box neutral" x="862" y="306" width="255" height="54"/>
+  <text class="body" x="885" y="339">Jℓ hℓ,P−1 at each selected layer</text>
+  <path class="line" d="M502 333 L546 333"/><path class="line" d="M758 333 L862 333"/>
+
+  <text class="body" x="80" y="415">row 1</text>
+  <rect class="box state" x="250" y="386" width="252" height="54"/>
+  <text class="body" x="276" y="419">after consuming y₀, position P</text>
+  <rect class="box answer" x="546" y="386" width="212" height="54"/>
+  <text class="body" x="619" y="419">y₁</text>
+  <rect class="box neutral" x="862" y="386" width="255" height="54"/>
+  <text class="body" x="885" y="419">Jℓ hℓ,P at each selected layer</text>
+  <path class="line" d="M502 413 L546 413"/><path class="line" d="M758 413 L862 413"/>
+
+  <text class="body" x="80" y="495">row 2</text>
+  <rect class="box state" x="250" y="466" width="252" height="54"/>
+  <text class="body" x="276" y="499">after consuming y₁, position P + 1</text>
+  <rect class="box special" x="546" y="466" width="212" height="54"/>
+  <text class="body" x="586" y="499">end-of-turn token</text>
+  <rect class="box neutral" x="862" y="466" width="255" height="54"/>
+  <text class="body" x="885" y="499">feature row is still retained</text>
+  <path class="line" d="M502 493 L546 493"/><path class="line" d="M758 493 L862 493"/>
+
+  <rect class="box neutral" x="56" y="574" width="510" height="130"/>
+  <text class="h" x="80" y="609">Feature tensor</text>
+  <text class="body" x="80" y="642">[generated_steps, selected_layers, feature_dimension]</text>
+  <text class="small" x="80" y="671">For layers [8, 16, 32]: [T, 3, 3840]</text>
+  <text class="small" x="80" y="692">One trajectory row per generated token per layer</text>
+
+  <rect class="box neutral" x="600" y="574" width="545" height="130"/>
+  <text class="h" x="624" y="609">Alignment sidecars</text>
+  <text class="body" x="624" y="642">generated_token_id, generation_step, source position and source token ID</text>
+  <text class="small" x="624" y="671">prompt flag, attention mask, special/control/EOS/end-of-turn masks</text>
+  <text class="small" x="624" y="692">reasoning and answer masks</text>
+</svg>

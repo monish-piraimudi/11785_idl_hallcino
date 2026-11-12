@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Answer labels train early-warning risk, while claim spans are required for token localization</title>
+  <desc id="desc">An external judge compares question, generated answer, and reference evidence, producing correct, incorrect, or not attempted. Labels are joined by ID and split by question family before fitting PCA. A causal model is trained with binary cross entropy on prefixes. Validation selects the threshold. Test reports AUROC, precision-recall curve, average precision, macro F1, lead time, false stops, and tokens saved.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#52647a"/></marker>
+    <style>
+      .bg{fill:#f7f9fc}.title{font:700 27px Arial,sans-serif;fill:#15253b}.sub{font:15px Arial,sans-serif;fill:#53657a}
+      .h{font:700 15px Arial,sans-serif;fill:#15253b}.body{font:13px Arial,sans-serif;fill:#263a52}.small{font:11.5px Arial,sans-serif;fill:#53657a}.math{font:15px Georgia,serif;fill:#15253b}
+      .box{stroke-width:1.5;rx:10}.judge{fill:#f0eafb;stroke:#795ab4}.data{fill:#e8eef8;stroke:#3d68a8}.train{fill:#e3f2ef;stroke:#168176}.valid{fill:#fff3dc;stroke:#ce9223}.test{fill:#e7eef8;stroke:#547da8}.warning{fill:#fff0ed;stroke:#c85c48}
+      .line{fill:none;stroke:#52647a;stroke-width:1.9;marker-end:url(#arrow)}.dash{fill:none;stroke:#c85c48;stroke-width:1.8;stroke-dasharray:6 5}
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="800"/>
+  <text class="title" x="36" y="45">Train on answer outcomes first, and add token truth only with span labels</text>
+  <text class="sub" x="36" y="72">Keep annotation, feature transforms, model selection, thresholding, and final testing separate.</text>
+
+  <rect class="box judge" x="38" y="125" width="245" height="145"/>
+  <text class="h" x="60" y="158">External annotation</text>
+  <text class="body" x="60" y="187">question + answer + reference</text>
+  <text class="body" x="60" y="215">correct / incorrect / abstain</text>
+  <text class="small" x="60" y="243">record judge, rubric, and evidence</text>
+
+  <rect class="box data" x="324" y="125" width="245" height="145"/>
+  <text class="h" x="346" y="158">Label sidecar</text>
+  <text class="body" x="346" y="187">id, label, group_id, split</text>
+  <text class="small" x="346" y="215">human-audit a subset</text>
+  <text class="small" x="346" y="243">keep not-attempted explicit</text>
+
+  <rect class="box train" x="610" y="125" width="245" height="145"/>
+  <text class="h" x="632" y="158">Group split first</text>
+  <text class="body" x="632" y="187">question family or entity</text>
+  <text class="small" x="632" y="215">balance labels within source</text>
+  <text class="small" x="632" y="243">fit PCA on train only</text>
+
+  <rect class="box warning" x="896" y="125" width="265" height="145"/>
+  <text class="h" x="918" y="158">Do not split by token row</text>
+  <text class="body" x="918" y="187">rows from one answer are related</text>
+  <text class="small" x="918" y="215">keep an entire group in one split</text>
+  <text class="small" x="918" y="243">avoid source and topic shortcuts</text>
+  <path class="line" d="M283 198 L324 198"/><path class="line" d="M569 198 L610 198"/><path class="line" d="M855 198 L896 198"/>
+
+  <text class="h" x="40" y="329">Prefix objective for early warning</text>
+  <rect class="box train" x="38" y="350" width="540" height="178"/>
+  <text class="math" x="62" y="389">Yᵢ = 1 if the completed answer is judged incorrect</text>
+  <text class="math" x="62" y="421">yᵢ,t = Yᵢ for a prefix ending at prediction step t</text>
+  <text class="math" x="62" y="457">L = (1/N) Σᵢ (1/Tᵢ) Σₜ BCEWithLogits(sᵢ,t, Yᵢ)</text>
+  <text class="small" x="62" y="491">1/Tᵢ gives each answer equal total weight, regardless of answer length.</text>
+  <text class="small" x="62" y="513">This learns future answer risk, not the truth of each token.</text>
+
+  <rect class="box warning" x="610" y="350" width="551" height="178"/>
+  <text class="h" x="634" y="385">Token or claim localization needs a different target</text>
+  <text class="body" x="634" y="418">Annotate unsupported claim spans against evidence.</text>
+  <text class="body" x="634" y="445">Align start/end spans to generation-step token pieces.</text>
+  <text class="small" x="634" y="477">The current collector saves token IDs, per-token pieces, and steps,</text>
+  <text class="small" x="634" y="498">but it does not save character offsets or claim-span labels.</text>
+  <text class="small" x="634" y="519">A binary answer verdict alone cannot supply token truth.</text>
+
+  <text class="h" x="40" y="578">Use validation to choose the stopping threshold, then evaluate test once</text>
+  <rect class="box train" x="38" y="600" width="310" height="118"/>
+  <text class="h" x="60" y="633">Train split</text>
+  <text class="body" x="60" y="661">PCA + causal model + BCE loss</text>
+  <text class="small" x="60" y="691">tune architecture on grouped validation</text>
+
+  <rect class="box valid" x="445" y="600" width="310" height="118"/>
+  <text class="h" x="467" y="633">Validation split</text>
+  <text class="body" x="467" y="661">select threshold τ and model size</text>
+  <text class="small" x="467" y="691">measure lead time and false stops</text>
+
+  <rect class="box test" x="852" y="600" width="309" height="118"/>
+  <text class="h" x="874" y="633">Held-out test</text>
+  <text class="body" x="874" y="661">AUROC, PR curve, average precision</text>
+  <text class="small" x="874" y="691">macro-F1 at frozen τ, tokens saved</text>
+  <path class="line" d="M348 659 L445 659"/><path class="line" d="M755 659 L852 659"/>
+
+  <text class="small" x="40" y="758">Also report prevalence and group-level uncertainty. A high score is not meaningful if source identity predicts the label.</text>
+</svg>

@@ -1,0 +1,4 @@
+During calibration, this small example passage supplies ordinary language tokens for exercising Jacobian fitting. It is a plumbing fixture only.
+Several brief sentences give the causal transformer enough source and target positions to test the averaging and backward graph.
+The lens artifact produced from this tiny sample is intentionally inadequate for scientific interpretation or hallucination research.
+Tokens from this separate calibration file never include the held-out question answers used by the collection examples.
